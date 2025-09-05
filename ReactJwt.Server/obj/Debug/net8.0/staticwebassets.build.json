@@ -1,0 +1,24 @@
+{
+  "Version": 1,
+  "Hash": "yjyOIB2joexrKDlvYH1S5zofCk+jM8zN3Pkip8ED3IU=",
+  "Source": "ReactJwt.Server",
+  "BasePath": "_content/ReactJwt.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "C:\\Users\\jean9\\Documents\\programacion\\ReactJwt\\reactjwt.client\\reactjwt.client.esproj",
+      "Version": 2,
+      "Source": "reactjwt.client",
+      "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

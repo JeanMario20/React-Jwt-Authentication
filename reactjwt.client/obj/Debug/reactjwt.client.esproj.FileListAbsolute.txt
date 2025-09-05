@@ -1,0 +1,1 @@
+C:\Users\jean9\Documents\programacion\ReactJwt\reactjwt.client\obj\Debug\reactjwt.client.esproj.CoreCompileInputs.cache

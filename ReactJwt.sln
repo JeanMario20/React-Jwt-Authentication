@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "reactjwt.client", "reactjwt.client\reactjwt.client.esproj", "{FA21FEBD-5A31-2B7E-9EFC-2EAD1C3FA2EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactJwt.Server", "ReactJwt.Server\ReactJwt.Server.csproj", "{19FA9EA9-F28A-4CF0-9A98-2003A41783E0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA21FEBD-5A31-2B7E-9EFC-2EAD1C3FA2EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA21FEBD-5A31-2B7E-9EFC-2EAD1C3FA2EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA21FEBD-5A31-2B7E-9EFC-2EAD1C3FA2EC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FA21FEBD-5A31-2B7E-9EFC-2EAD1C3FA2EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA21FEBD-5A31-2B7E-9EFC-2EAD1C3FA2EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA21FEBD-5A31-2B7E-9EFC-2EAD1C3FA2EC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{19FA9EA9-F28A-4CF0-9A98-2003A41783E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19FA9EA9-F28A-4CF0-9A98-2003A41783E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19FA9EA9-F28A-4CF0-9A98-2003A41783E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19FA9EA9-F28A-4CF0-9A98-2003A41783E0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04F4203F-9A39-4C6F-956D-18C05C22F539}
+	EndGlobalSection
+EndGlobal
