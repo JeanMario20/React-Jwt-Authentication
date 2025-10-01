@@ -1,15 +1,26 @@
 //import React from "react";
 import { useForm } from "./UseFormHandler";
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
     const initialState = {
         userName: "",
         password_hash: "",
     };
+    const navigate = useNavigate();
 
-    async function loginUserCallback() {
+    function GoToPage(url: string) {
         try {
-            const res = await fetch("https://localhost:7101/api/Auth/Register", {
+            navigate(url);
+        } catch (error) {
+            console.log("ha ocurrido un error con el redireccionado",error)
+        }
+        
+    }
+
+    async function LoginUserCallback() {
+        try {
+            const res = await fetch("http://localhost:5250/api/Auth/login", {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"
@@ -24,10 +35,13 @@ export default function Login() {
 
             //const result = await res.json();
             console.log("usuario agregado");
-            //setResponse(JSON.stringify(result)); se pone un useState;
-            //hacer a continuacion ingresar nuevos usuarios
-            //crear jwtTokenCode
-            //almacenar base de datos
+            const data = await res.json();
+            const token = data.token;
+            //console.log(token)
+            
+            GoToPage("/Bienvenido");
+
+
 
             //luego
             //crear una pagina que renderice usuarios validados
@@ -41,7 +55,7 @@ export default function Login() {
     }
 
     const { onChange, onSubmit, values } = useForm(
-        loginUserCallback,
+        LoginUserCallback,
         initialState
     );
 
@@ -59,8 +73,8 @@ export default function Login() {
                         required
                     />
                     <input
-                        name="password"
-                        id="password"
+                        name="password_hash"
+                        id="password_hash"
                         type="password"
                         placeholder="Password"
                         onChange={onChange}

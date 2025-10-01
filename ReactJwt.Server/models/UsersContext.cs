@@ -10,6 +10,7 @@ namespace ReactJwt.Server.Models
         public UsersContext(string connectionString)
         {
             this.ConnectionString = connectionString;
+            Console.WriteLine(this.ConnectionString);
         }
 
         private MySqlConnection GetConnection()

@@ -23,12 +23,22 @@ namespace ReactJwt.Server.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] usersModels user)
         {
-            if (user.userName == "admin" && user.password_hash == "password")
+            string query = "SELECT username, password_hash FROM users WHERE username = @username";
+            MySqlConnection mConnection = new MySqlConnection(_config.GetConnectionString("DefaultConnection"));
+            using (var cmd = new MySqlCommand(query, mConnection))
+            {
+                Console.WriteLine(user.userName);
+                Console.WriteLine("usuario encontrado");
+            }
+
+            return Ok(new { message = "Usuario encontrado" });
+
+            /*if (user.userName == "admin" && user.password_hash == "password")
             {
                 var token = GenerateJwtToken(user.userName);
                 return Ok(new { token });
             }
-            return Unauthorized();
+            return Unauthorized();*/
         }
 
         [HttpPost("Register")]
@@ -41,7 +51,6 @@ namespace ReactJwt.Server.Controllers
             string cmdText = "INSERT INTO users (username, password_hash) VALUES (@username, @password)";
             MySqlConnection mConnection = new MySqlConnection(_config.GetConnectionString("DefaultConnection"));
 
-            Console.WriteLine(_config.GetConnectionString("DefaultConnection"));
             using (var cmd = new MySqlCommand(cmdText, mConnection))
             {
                 mConnection.Open();
@@ -50,7 +59,16 @@ namespace ReactJwt.Server.Controllers
                 cmd.ExecuteNonQuery();
             }
 
-            return Ok("usuario registrado");
+            Response.Cookies.Append("token", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                //SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None, // <- como mi back y front estan en distintos puertos se pone asi
+                Expires = DateTimeOffset.UtcNow.AddHours(1)
+            });
+
+            return Ok(new { message = "Usuario registrado" });
 
         }
 
