@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+
 namespace ReactJwt.Server.Controllers
 {
     [ApiController]
@@ -20,44 +21,86 @@ namespace ReactJwt.Server.Controllers
             _config = config;
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public IActionResult Login([FromBody] usersModels user)
         {
-            string query = "SELECT username, password_hash FROM users WHERE username = @username";
+            string query = "SELECT password_hash, password_salt FROM users WHERE username = @username";
             MySqlConnection mConnection = new MySqlConnection(_config.GetConnectionString("DefaultConnection"));
+            bool userFound = false;
             using (var cmd = new MySqlCommand(query, mConnection))
             {
-                Console.WriteLine(user.userName);
-                Console.WriteLine("usuario encontrado");
+
+                mConnection.Open();
+                cmd.Parameters.AddWithValue("@username", user.userName);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        string passwordHashDB = reader.GetString(0);
+                        string passwordSaltDB = reader.GetString(1);
+                        byte[] hashByte = Convert.FromBase64String(passwordHashDB);
+                        byte[] saltByte = Convert.FromBase64String(passwordSaltDB);
+                        var verifyPass = PasswordHaser.PasswordHasher.VerifyPasswordHash(user.password_hash, hashByte, saltByte);
+                        userFound = verifyPass;
+                    }
+                }
+                mConnection.Close();
             }
 
-            return Ok(new { message = "Usuario encontrado" });
-
-            /*if (user.userName == "admin" && user.password_hash == "password")
+            if (userFound == true)
             {
                 var token = GenerateJwtToken(user.userName);
-                return Ok(new { token });
+                Response.Cookies.Append("token", token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    //SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None, // <- como mi back y front estan en distintos puertos se pone asi
+                    Expires = DateTimeOffset.UtcNow.AddHours(1)
+                });
             }
-            return Unauthorized();*/
+
+            return Ok(userFound);
+            //admin1234 - admin1234
         }
 
         [HttpPost("Register")]
         public IActionResult Register([FromBody] usersModels user)
         {
-
             var token = GenerateJwtToken(user.userName);
-
-
-            string cmdText = "INSERT INTO users (username, password_hash) VALUES (@username, @password)";
-            MySqlConnection mConnection = new MySqlConnection(_config.GetConnectionString("DefaultConnection"));
-
-            using (var cmd = new MySqlCommand(cmdText, mConnection))
+            try
             {
-                mConnection.Open();
-                cmd.Parameters.AddWithValue("@username", user.userName);
-                cmd.Parameters.AddWithValue("@password", user.password_hash);
-                cmd.ExecuteNonQuery();
+                string cmdText = "INSERT INTO users (username, password_hash, password_salt) VALUES (@username, @passwordHash, @passwordSalt)";
+                MySqlConnection mConnection = new MySqlConnection(_config.GetConnectionString("DefaultConnection"));
+                PasswordHaser.PasswordHasher.CreatePasswordHash(user.password_hash, out byte[] passwordHash, out byte[] passwordSalt);
+                string hashString = Convert.ToBase64String(passwordHash);
+                string saltString = Convert.ToBase64String(passwordSalt);
+                user.password_hash = hashString;
+                user.password_salt = saltString;
+
+                using (var cmd = new MySqlCommand(cmdText, mConnection))
+                {
+                    mConnection.Open();
+                    cmd.Parameters.AddWithValue("@username", user.userName);
+                    cmd.Parameters.AddWithValue("@passwordHash", user.password_hash);
+                    cmd.Parameters.AddWithValue("@passwordSalt", user.password_salt);
+                    cmd.ExecuteNonQuery();
+                    mConnection.Close();
+                }
             }
+            catch (MySqlException ex)
+            {
+                if (ex.Number == 1062)
+                {
+                    Console.WriteLine("Error usuario ingresado duplicado en la Base de datos");
+                    return Ok(new { duplicado = true, nuevoUsuario = false });
+                }
+                else
+                {
+                    Console.WriteLine($"MySQL Error: {ex.Message}");
+                }
+            }
+
 
             Response.Cookies.Append("token", token, new CookieOptions
             {
@@ -68,7 +111,7 @@ namespace ReactJwt.Server.Controllers
                 Expires = DateTimeOffset.UtcNow.AddHours(1)
             });
 
-            return Ok(new { message = "Usuario registrado" });
+            return Ok(new { duplicado = false, nuevoUsario = true });
 
         }
 

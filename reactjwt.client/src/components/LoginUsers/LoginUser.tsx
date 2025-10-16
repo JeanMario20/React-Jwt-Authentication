@@ -3,10 +3,18 @@ import { useForm } from "./UseFormHandler";
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+
+    interface Props {
+        onClick: () => void;
+        children?: React.ReactNode;
+    }
+
     const initialState = {
         userName: "",
         password_hash: "",
+        password_salt: ""
     };
+
     const navigate = useNavigate();
 
     function GoToPage(url: string) {
@@ -18,9 +26,17 @@ export default function Login() {
         
     }
 
+    function GoToLoginPage(url: string) {
+        try {
+            navigate(url);
+        } catch (error) {
+            console.log("ha ocurrido un error con el redireccionado", error)
+        }
+    }
+
     async function LoginUserCallback() {
         try {
-            const res = await fetch("http://localhost:5250/api/Auth/login", {
+            const res = await fetch("http://localhost:5250/api/Auth/Login", {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"
@@ -33,20 +49,18 @@ export default function Login() {
                 throw new Error(`HTTP error! status: ${res.status}`);
             }
 
-            //const result = await res.json();
-            console.log("usuario agregado");
-            const data = await res.json();
-            const token = data.token;
-            //console.log(token)
+            try {
+                const data = await res.json();
+                if (data == true) {
+                    GoToPage("/Bienvenido");
+                }
+                if (data == false) {
+                    alert("los datos que se proporcionaron fueron incorrectos")
+                }
+            } catch (e) {
+                console.log("ha ocurrido un error en el registro de sesion:" + e);
+            }
             
-            GoToPage("/Bienvenido");
-
-
-
-            //luego
-            //crear una pagina que renderice usuarios validados
-            //crear pagina para ingresar usuarios ya registrados con token
-
 
         } catch (error) {
             console.error("Error:", error);
@@ -59,9 +73,15 @@ export default function Login() {
         initialState
     );
 
+    function ButtonLogin({ onClick, children }: Props) {
+        return (
+            <button onClick={onClick}>{children}</button>
+        )
+    }
+
     return (
         <>
-            <h2>Registro de nuevo usuario</h2>
+            <h2>Ingresa el usuario registrado</h2>
             <form onSubmit={onSubmit}>
                 <div>
                     <input
@@ -83,6 +103,7 @@ export default function Login() {
                     <button type="submit">Login</button>
                 </div>
             </form>
+            <ButtonLogin onClick={() => GoToLoginPage("/Login")}>Registrar nuevo usuario</ButtonLogin>
         </>
     );
 }
