@@ -67,7 +67,7 @@ namespace ReactJwt.Server.Controllers
         [HttpPost("Register")]
         public IActionResult Register([FromBody] usersModels user)
         {
-            var token = GenerateJwtToken(user.userName);
+
             try
             {
                 string cmdText = "INSERT INTO users (username, password_hash, password_salt) VALUES (@username, @passwordHash, @passwordSalt)";
@@ -101,7 +101,7 @@ namespace ReactJwt.Server.Controllers
                 }
             }
 
-
+            var token = GenerateJwtToken(user.userName);
             Response.Cookies.Append("token", token, new CookieOptions
             {
                 HttpOnly = true,
